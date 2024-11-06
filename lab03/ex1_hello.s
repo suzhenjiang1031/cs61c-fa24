@@ -1,7 +1,7 @@
 .text
 
 addi a0 x0 1
-addi a1 x0 2024
+addi a1 x0 2024cs61c
 
 # This prints out the integer stored in a1
 ecall
