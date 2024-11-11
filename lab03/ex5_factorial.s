@@ -27,7 +27,22 @@ main:
 # The return value should be stored in a0
 factorial:
     # YOUR CODE HERE
+    addi t0 a0 -1
+    blez t0 base_case
+    
+    addi sp sp -4
+    sw ra 0(sp)
+    addi a0 a0 -1
+    jal ra factorial
+    lw ra 0(sp)
+    addi sp sp 4
+    
+    mul a0 a0 t0
 
     # This is how you return from a function. You'll learn more about this later.
     # This should be the last line in your program.
+    jr ra
+  
+  base_case:
+    li a0 1
     jr ra
