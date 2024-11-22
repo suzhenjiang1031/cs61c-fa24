@@ -49,7 +49,11 @@ next_test:
 #
 pow:
     # BEGIN PROLOGUE
+    addi sp, sp, -8 # Save ra and s0
+    sw ra, 0(sp)
+    sw s0, 4(sp)
     # FIXME: Need to save the callee saved register(s)
+    #Prologue
     # END PROLOGUE
     li s0, 1
 pow_loop:
@@ -60,9 +64,13 @@ pow_loop:
 pow_end:
     mv a0, s0
     # BEGIN EPILOGUE
+    lw s0, 4(sp)
+    lw ra, 0(sp)
+    addi sp, sp, 8
     # FIXME: Need to restore the callee saved register(s)
-    # END EPILOGUE
+    #Epilogue
     jr ra
+    # END EPILOGUE
 
 # Increments the elements of an array in-place.
 # a0 holds the address of the start of the array, and a1 holds
@@ -73,8 +81,12 @@ pow_end:
 inc_arr:
     # BEGIN PROLOGUE
     # FIXME: What other registers need to be saved?
-    addi sp, sp, -4
+    #Prologue
+    addi sp, sp, -12 # Save ra, s0, s1
     sw ra, 0(sp)
+    sw s0, 4(sp)
+    sw s1, 8(sp)
+    
     # END PROLOGUE
     mv s0, a0 # Copy start of array to saved register
     mv s1, a1 # Copy length of array to saved register
@@ -86,20 +98,29 @@ inc_arr_loop:
     # Prepare to call helper_fn
     #
     # FIXME: Add code to preserve the value in t0 before we call helper_fn
+    # Save t0 before calling helper_fn
+    addi sp, sp, -4
+    sw t0, 0(sp)
+    
     # Also ask yourself this: why don't we need to preserve t1?
     #
     jal ra helper_fn
     # FIXME: Restore t0
-    # Finished call for helper_fn
+    lw t0, 0(sp)
+    addi sp, sp, 4
     addi t0, t0, 1 # Increment counter
     j inc_arr_loop
+    
 inc_arr_end:
     # BEGIN EPILOGUE
     # FIXME: What other registers need to be restored?
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    # END EPILOGUE
+    #Epilogue 
+    lw ra, 0(sp) # Restore ra
+    lw s0, 4(sp) # Restore s0
+    lw s1, 8(sp) # Restore s1
+    addi sp, sp, 12 # Restore stack pointer
     jr ra
+    # END EPILOGUE
 
 # This helper function adds 1 to the value at the memory address in a0.
 # It doesn't return anything.
@@ -112,12 +133,19 @@ inc_arr_end:
 helper_fn:
     # BEGIN PROLOGUE
     # FIXME: YOUR CODE HERE
+    #Prologue
+    addi sp, sp, -4
+    sw s0, 0(sp)
+    
     # END PROLOGUE
-    lw t1, 0(a0)
-    addi s0, t1, 1
-    sw s0, 0(a0)
+    lw t1, 0(a0)  # Load value at address
+    addi t1, t1, 1 # Load value at address
+    sw t1, 0(a0) # Store back incremented value
     # BEGIN EPILOGUE
     # FIXME: YOUR CODE HERE
+    #Epilogue
+    lw s0, 0(sp)
+    addi sp, sp, 4
     # END EPILOGUE
     jr ra
 
