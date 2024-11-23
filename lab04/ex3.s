@@ -32,6 +32,9 @@ main:
 #     where ^ is the exponent operator, not XOR
 ex3:
     # Note: Add code BELOW without altering existing lines.
+    addi sp sp -8
+    sw t0 0(sp)
+    sw ra 4(sp)
 
     # return 1 if a1 == 0
     beq a1 x0 ex3_zero_case
@@ -43,7 +46,7 @@ ex3:
     jal ra ex3    # call ex3(a0, a1-1)
 
     mul a0 a0 t0  # multiply ex3(a0, a1-1) by t0
-                  # (which contains the value of a0)
+                  # (which contains the value of a0)    
 
     j ex3_end
 
@@ -53,4 +56,7 @@ ex3_zero_case:
     li a0 1
 
 ex3_end:
+    lw t0 0(sp)
+    lw ra 4(sp)
+    addi sp sp 8
     jr ra
